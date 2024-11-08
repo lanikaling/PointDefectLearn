@@ -41,9 +41,7 @@ Point defects were simulated in the supercells, with three variations per defect
 
 PDFs were truncated between $r = 1.5$ Å and $r = 30$ Å, interpolated on a grid of 300 points, and normalized using:
 
-\[
-x = \frac{x - \text{min}(x)}{\text{max}(x) - \text{min}(x)}
-\]
+$x = \frac{x - \text{min}(x)}{\text{max}(x) - \text{min}(x)}$
 
 Each normalized PDF was formatted for model input by concatenating original and distorted PDFs into a shape of (2, 300), allowing simultaneous access to both unaltered and defect-affected data.
 
@@ -53,10 +51,10 @@ Each normalized PDF was formatted for model input by concatenating original and 
 |-----------------|-------|
 | $r_{\text{max}}$ (Å)  | 30.0  |
 | $r_{\text{step}}$ (Å) | 0.01  |
-| $q_{\text{min}}$ (Å$^{-1}$) | 0.6   |
-| $q_{\text{max}}$ (Å$^{-1}$) | 23.6  |
-| $q_{\text{damp}}$ (Å$^{-1}$) | 0.029 |
-| $q_{\text{broad}}$ (Å$^{-1}$) | 0.010 |
+| $q_{\text{min}}$ ($Å^{-1}$) | 0.6   |
+| $q_{\text{max}}$ ($Å^{-1}$) | 23.6  |
+| $q_{\text{damp}}$ ($Å^{-1}$) | 0.029 |
+| $q_{\text{broad}}$ ($Å^{-1}$) | 0.010 |
 
 ## Model Architecture
 
