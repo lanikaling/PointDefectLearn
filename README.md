@@ -49,8 +49,8 @@ Each normalized PDF was formatted for model input by concatenating original and 
 
 | Parameter       | Value |
 |-----------------|-------|
-| $r_{\text{max}}$ (Å)  | 30.0  |
-| $r_{\text{step}}$ (Å) | 0.01  |
+| $r_{\text{max}}$ ($Å$)  | 30.0  |
+| $r_{\text{step}}$ ($Å$) | 0.01  |
 | $q_{\text{min}}$ ($Å^{-1}$) | 0.6   |
 | $q_{\text{max}}$ ($Å^{-1}$) | 23.6  |
 | $q_{\text{damp}}$ ($Å^{-1}$) | 0.029 |
