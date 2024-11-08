@@ -22,12 +22,12 @@ The dataset consists of pure metal structures extracted from the ICSD database. 
 
 | Space Group | Label     | Lattice Parameters                        | Crystal System | Count |
 |-------------|-----------|-------------------------------------------|----------------|-------|
-| 225         | Fm-3m     | \( a = b = c \), \( \alpha = \beta = \gamma = 90^\circ \) | Cubic          | 391   |
-| 194         | P6₃/mmc   | \( a = b \neq c \), \( \alpha = \beta = 90^\circ \), \( \gamma = 120^\circ \) | Hexagonal     | 341   |
-| 229         | Im-3m     | \( a = b = c \), \( \alpha = \beta = \gamma = 90^\circ \) | Cubic          | 273   |
-| 139         | I4/mmm    | \( a = b \neq c \), \( \alpha = \beta = \gamma = 90^\circ \) | Tetragonal    | 83    |
-| 141         | I4₁/amd   | \( a = b \neq c \), \( \alpha = \beta = \gamma = 90^\circ \) | Tetragonal    | 52    |
-| 140         | I4/mcm    | \( a = b \neq c \), \( \alpha = \beta = \gamma = 90^\circ \) | Tetragonal    | 32    |
+| 225         | Fm-3m     | $a = b = c$, $\alpha = \beta = \gamma = 90^\circ$ | Cubic          | 391   |
+| 194         | P6₃/mmc   | $a = b \neq c$, $\alpha = \beta = 90^\circ$, $\gamma = 120^\circ$ | Hexagonal     | 341   |
+| 229         | Im-3m     | $a = b = c$, $\alpha = \beta = \gamma = 90^\circ$ | Cubic          | 273   |
+| 139         | I4/mmm    | $a = b \neq c$, $\alpha = \beta = \gamma = 90^\circ$ | Tetragonal    | 83    |
+| 141         | I4₁/amd   | $a = b \neq c$, $\alpha = \beta = \gamma = 90^\circ$ | Tetragonal    | 52    |
+| 140         | I4/mcm    | $a = b \neq c$, $\alpha = \beta = \gamma = 90^\circ$ | Tetragonal    | 32    |
 
 ### Point Defect Simulations
 
@@ -39,7 +39,7 @@ Point defects were simulated in the supercells, with three variations per defect
 
 ## Data Processing
 
-PDFs were truncated between \( r = 1.5 \) Å and \( r = 30 \) Å, interpolated on a grid of 300 points, and normalized using:
+PDFs were truncated between $r = 1.5$ Å and $r = 30$ Å, interpolated on a grid of 300 points, and normalized using:
 
 \[
 x = \frac{x - \text{min}(x)}{\text{max}(x) - \text{min}(x)}
@@ -51,12 +51,12 @@ Each normalized PDF was formatted for model input by concatenating original and 
 
 | Parameter       | Value |
 |-----------------|-------|
-| \( r_{\text{max}} \) (Å)  | 30.0  |
-| \( r_{\text{step}} \) (Å) | 0.01  |
-| \( q_{\text{min}} \) (Å\(^{-1}\)) | 0.6   |
-| \( q_{\text{max}} \) (Å\(^{-1}\)) | 23.6  |
-| \( q_{\text{damp}} \) (Å\(^{-1}\)) | 0.029 |
-| \( q_{\text{broad}} \) (Å\(^{-1}\)) | 0.010 |
+| $r_{\text{max}}$ (Å)  | 30.0  |
+| $r_{\text{step}}$ (Å) | 0.01  |
+| $q_{\text{min}}$ (Å$^{-1}$) | 0.6   |
+| $q_{\text{max}}$ (Å$^{-1}$) | 23.6  |
+| $q_{\text{damp}}$ (Å$^{-1}$) | 0.029 |
+| $q_{\text{broad}}$ (Å$^{-1}$) | 0.010 |
 
 ## Model Architecture
 
@@ -64,7 +64,7 @@ The CNN model begins with a 2D convolutional layer on the concatenated PDFs, fol
 
 ## Optimization
 
-The model uses CrossEntropy loss with class weights (inverse of class frequency) to manage class imbalance. The Adam optimizer with a learning rate of 0.0001 is used, along with a learning rate scheduler (`ReduceLROnPlateau`) that reduces the rate by 0.85 if no validation improvement is observed within five epochs, with a threshold of 0.5% and minimum learning rate of \( 1 \times 10^{-7} \).
+The model uses CrossEntropy loss with class weights (inverse of class frequency) to manage class imbalance. The Adam optimizer with a learning rate of 0.0001 is used, along with a learning rate scheduler (`ReduceLROnPlateau`) that reduces the rate by 0.85 if no validation improvement is observed within five epochs, with a threshold of 0.5% and minimum learning rate of $1 \times 10^{-7}$.
 
 ## Results
 
