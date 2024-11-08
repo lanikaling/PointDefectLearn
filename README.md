@@ -1,93 +1,73 @@
-# ll_distortion_learning
+# Point Defect Classification in Metal Structures Using Neural Networks
 
+This project tackles the classification of point defect subtypes in metal structures based on pair distribution function (PDF) data using a neural network. 
+More details are provided in Chapter 6 of Ling Lan’s PhD thesis (Columbia University).
 
+## Background
 
-## Getting started
+Point defects are zero-dimensional imperfections in a crystal lattice. The four main types of point defects considered are:
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+- **Vacancies**: Missing atoms from lattice sites.
+- **Self-Interstitials**: Extra atoms of the same type in interstitial sites.
+- **Substitutional Impurities**: Lattice atoms replaced by different atoms.
+- **Interstitial Impurities**: Different atoms occupying interstitial spaces.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+The PDF data of metal crystals with these four point defects were used as input data to train a convolutional neural network (CNN) model. Results indicate strong classification capability for these defect types.
 
-## Add your files
+## Dataset
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+### Pure Metal Structures
 
-```
-cd existing_repo
-git remote add origin https://gitlab.thebillingegroup.com/analysis/ll_distortion_learning.git
-git branch -M main
-git push -uf origin main
-```
+The dataset consists of pure metal structures extracted from the ICSD database. We filtered structures to retain only those in the six most frequent space groups, resulting in a subset of 1,172 out of 1,438 structures, covering 81.5%. For each structure, a 5x5x5 supercell was generated using symmetry operations and periodic boundary conditions.
 
-## Integrate with your tools
+| Space Group | Label     | Lattice Parameters                        | Crystal System | Count |
+|-------------|-----------|-------------------------------------------|----------------|-------|
+| 225         | Fm-3m     | \( a = b = c \), \( \alpha = \beta = \gamma = 90^\circ \) | Cubic          | 391   |
+| 194         | P6₃/mmc   | \( a = b \neq c \), \( \alpha = \beta = 90^\circ \), \( \gamma = 120^\circ \) | Hexagonal     | 341   |
+| 229         | Im-3m     | \( a = b = c \), \( \alpha = \beta = \gamma = 90^\circ \) | Cubic          | 273   |
+| 139         | I4/mmm    | \( a = b \neq c \), \( \alpha = \beta = \gamma = 90^\circ \) | Tetragonal    | 83    |
+| 141         | I4₁/amd   | \( a = b \neq c \), \( \alpha = \beta = \gamma = 90^\circ \) | Tetragonal    | 52    |
+| 140         | I4/mcm    | \( a = b \neq c \), \( \alpha = \beta = \gamma = 90^\circ \) | Tetragonal    | 32    |
 
-- [ ] [Set up project integrations](https://gitlab.thebillingegroup.com/analysis/ll_distortion_learning/-/settings/integrations)
+### Point Defect Simulations
 
-## Collaborate with your team
+Point defects were simulated in the supercells, with three variations per defect type:
+- **Vacancy**: Randomly chosen vacancy percentages.
+- **Self-Interstitial**: Random self-interstitial percentages with defined interstitial sites.
+- **Substitutional Impurities**: Random substitutional impurity percentages with metal atoms.
+- **Interstitial Impurities**: Similar to self-interstitial using defined interstitial sites.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+## Data Processing
 
-## Test and Deploy
+PDFs were truncated between \( r = 1.5 \) Å and \( r = 30 \) Å, interpolated on a grid of 300 points, and normalized using:
 
-Use the built-in continuous integration in GitLab.
+\[
+x = \frac{x - \text{min}(x)}{\text{max}(x) - \text{min}(x)}
+\]
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+Each normalized PDF was formatted for model input by concatenating original and distorted PDFs into a shape of (2, 300), allowing simultaneous access to both unaltered and defect-affected data.
 
-***
+### Experimental Parameters for PDF Calculation
 
-# Editing this README
+| Parameter       | Value |
+|-----------------|-------|
+| \( r_{\text{max}} \) (Å)  | 30.0  |
+| \( r_{\text{step}} \) (Å) | 0.01  |
+| \( q_{\text{min}} \) (Å\(^{-1}\)) | 0.6   |
+| \( q_{\text{max}} \) (Å\(^{-1}\)) | 23.6  |
+| \( q_{\text{damp}} \) (Å\(^{-1}\)) | 0.029 |
+| \( q_{\text{broad}} \) (Å\(^{-1}\)) | 0.010 |
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+## Model Architecture
 
-## Suggestions for a good README
+The CNN model begins with a 2D convolutional layer on the concatenated PDFs, followed by batch normalization and dropout (0.5 rate). Two residual blocks increase feature depth from 64 to 256 channels. A transition layer reduces feature depth, followed by flattening and two fully connected layers, ending with a four-class output for defect classification.
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+## Optimization
 
-## Name
-Choose a self-explaining name for your project.
+The model uses CrossEntropy loss with class weights (inverse of class frequency) to manage class imbalance. The Adam optimizer with a learning rate of 0.0001 is used, along with a learning rate scheduler (`ReduceLROnPlateau`) that reduces the rate by 0.85 if no validation improvement is observed within five epochs, with a threshold of 0.5% and minimum learning rate of \( 1 \times 10^{-7} \).
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+## Results
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+- **Classification Accuracy**: Achieved strong top-two accuracy scores approaching 100%, with an overall test accuracy of 80.10%.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+For more detailed analysis and results, please refer to Chapter 6 of Ling Lan’s thesis.
