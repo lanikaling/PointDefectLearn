@@ -6,9 +6,9 @@ import json
 import shutil
 from torch import nn
 from torch.utils.data import DataLoader
-from distortion_learning.model_utils import Conv2DRobustClassifier
-from distortion_learning.dataset import DistortionLearningDataset
-from distortion_learning.data_utils import count_data_types
+from point_defect_learn.model_utils import Conv2DRobustClassifier
+from point_defect_learn.dataset import DistortionLearningDataset
+from point_defect_learn.data_utils import count_data_types
 
 
 def mkdir(folder):

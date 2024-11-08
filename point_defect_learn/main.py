@@ -10,7 +10,7 @@ from pytorch_lightning.callbacks import LearningRateMonitor
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import TensorBoardLogger
 
-from distortion_learning.models import Conv2DModel
+from point_defect_learn.models import Conv2DModel
 
 
 def load_config(filepath):

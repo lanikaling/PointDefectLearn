@@ -1,17 +1,20 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from bg_mpl_stylesheet.bg_mpl_stylesheet import bg_mpl_style
+from matplotlib import rc
 import seaborn as sns
 import os
 
 
 def plot_processed_and_original(
     filename,
+    text=None,
     normalization=None,
     offset=2,
     directory="../data/pdf",
     if_show=True,
     if_save=False,
+    if_legend=False,
     save_dir=None,
 ):
     """
@@ -39,15 +42,6 @@ def plot_processed_and_original(
     atom_species = original_filename_parts[-2]
     percentage = original_filename_parts[-1][:-3].replace("p", ".") + "%"
 
-    # Update the title and save_filename based on the extracted details
-    title = f"{defect_type} ({atom_species}, {percentage})"
-    save_filename = (
-        f"{defect_type}_{atom_species}_{percentage}".replace(".", "p").replace(
-            "%", ""
-        )
-        + ".png"
-    )
-
     # Paths
     processed_dir = os.path.join(directory, filename)
     original_filename = "_".join(original_filename_parts[0:3]) + ".gr"
@@ -67,31 +61,44 @@ def plot_processed_and_original(
         )
 
     # Plot
-    plt.figure(figsize=(10, 3))
+    fig, ax = plt.subplots()
+    fig.set_size_inches(10, 3)
     plt.style.use(bg_mpl_style)
-    plt.plot(
+    rc("text", usetex=True)
+    plt.rcParams.update(
+        {
+            "text.latex.preamble": r"\usepackage{mathrsfs} \usepackage{sansmath} \sansmath"  # Using sansmath package for sans-serif
+        }
+    )
+    ax.plot(
         x_processed, y_processed, label="Distorted", linestyle="-", marker=""
     )
-    plt.plot(
+    ax.plot(
         x_original, y_original, label="Original", linestyle="--", marker=""
     )
-    plt.plot(
+    ax.plot(
         x_original,
         y_original - y_processed - offset,
         label="difference",
         linestyle="-.",
         marker="",
     )
-    plt.legend()
-    plt.xlabel("X Axis Label")
-    plt.ylabel("Y Axis Label")
-    plt.title(title)
+    if if_legend:
+        plt.legend()
+    plt.xlabel(r"r ($\mathrm{\AA}$)", fontsize=20)
+    plt.ylabel(r"G ($\mathrm{\AA}$$^{-2}$)", fontsize=20)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+
+    if text:
+        ax_text = fig.add_axes(text["loc"])
+        ax_text.text(0, 0, text["content"], fontsize=22)
+        ax_text.set_axis_off()
 
     # Show or save
     if if_save and save_dir is not None:
-        save_path = os.path.join(save_dir, save_filename)
-        plt.savefig(save_path)
-        print(f"Plot saved to {save_path}")
+        plt.savefig(save_dir)
+        print(f"Plot saved to {save_dir}")
     if if_show:
         plt.show()
     plt.close()
@@ -137,7 +144,7 @@ def plot_eval_data(
     if title:
         ax.set_title(title)
 
-    ax.legend()
+    # ax.legend()
 
     if save and save_dir and save_filename:
         if not os.path.exists(save_dir):
@@ -167,13 +174,15 @@ def plot_cm(
         yticklabels=ticklabels,
     )
     plt.xlabel("Predicted labels")
-    plt.ylabel("True labels")
-    plt.title(f"Confusion Matrix for {dataset_label} Set")
+    plt.ylabel("Actual labels")
+    # plt.title(f"Confusion Matrix for {dataset_label} Set")
+    plt.xticks(rotation=0, fontsize=10)  # Horizontal x-axis labels
+    plt.yticks(rotation=90, fontsize=10)  # Horizontal y-axis labels
 
     if if_save:
         if save_dir:
             save_path = os.path.join(
-                save_dir, f"confusion_matrix_{dataset_label}.png"
+                save_dir, f"confusion_matrix_{dataset_label}.pdf"
             )
             plt.savefig(save_path)
             print(f"Confusion matrix saved to {save_path}")

@@ -13,9 +13,9 @@ from torch.nn.functional import softmax
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
 import matplotlib.pyplot as plt
-from distortion_learning.models import Conv2DModel
-from distortion_learning.dataset import DistortionLearningDataset
-from distortion_learning.plot_utils import plot_cm
+from point_defect_learn.models import Conv2DModel
+from point_defect_learn.dataset import DistortionLearningDataset
+from point_defect_learn.plot_utils import plot_cm
 
 
 def load_config(filepath):
@@ -34,7 +34,7 @@ def seed(cfg):
 
 
 def load_model(epoch=None, print_cfg=False):
-    cfg = load_config(filepath="../distortion_learning/config.yaml")
+    cfg = load_config(filepath="../point_defect_learn/config.yaml")
     if print_cfg:
         pprint.pprint(cfg)
     cfg = munchify(cfg)
@@ -93,7 +93,7 @@ def retrieve_data(
     print_cfg=False,
     version=0,
 ):
-    cfg = load_config(filepath="../distortion_learning/config.yaml")
+    cfg = load_config(filepath="../point_defect_learn/config.yaml")
     if print_cfg:
         pprint.pprint(cfg)
     cfg = munchify(cfg)
@@ -175,7 +175,7 @@ def compute_accuracy(
     print(checkpoint_filepath)
     model.eval()
 
-    with open("../distortion_learning/data_split.json") as f:
+    with open("../point_defect_learn/data_split.json") as f:
         data = json.load(f)
 
     dataset = DistortionLearningDataset(
@@ -259,7 +259,7 @@ def plot_confusion_matrix(
     device = next(model.parameters()).device  # Get the device the model is on
 
     # Load dataset configuration and initialize DataLoader
-    with open("../distortion_learning/data_split.json") as f:
+    with open("../point_defect_learn/data_split.json") as f:
         data = json.load(f)
     dataset = DistortionLearningDataset(
         data[dataset_label],

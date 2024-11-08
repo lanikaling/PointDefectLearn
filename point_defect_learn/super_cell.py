@@ -10,13 +10,13 @@ from scipy.stats import norm
 from diffpy.structure import Lattice, loadStructure, Structure
 from diffpy.srreal.pdfcalculator import PDFCalculator
 from pymatgen.io.cif import CifParser
-from distortion_learning.constants import (
+from point_defect_learn.constants import (
     METAL_ELEMENTS,
     ATOMIC_NUMBER,
     SG_LABELS,
     UISO_VALUES,
 )
-from distortion_learning.interstitial_sites import interstitial_sites
+from point_defect_learn.interstitial_sites import interstitial_sites
 
 
 class SuperCell:
